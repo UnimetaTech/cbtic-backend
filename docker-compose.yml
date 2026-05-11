@@ -1,0 +1,38 @@
+services:
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: cbtic-api
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      DATABASE_URL: postgresql://cbtic:cbtic@db:5432/cbtic_db?sslmode=disable
+      PORT: 8080
+    ports:
+      - "8080:8080"
+    depends_on:
+      db:
+        condition: service_healthy
+
+  db:
+    image: postgres:16-alpine
+    container_name: cbtic-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: cbtic
+      POSTGRES_PASSWORD: cbtic
+      POSTGRES_DB: cbtic_db
+    ports:
+      - "5433:5432"
+    volumes:
+      - cbtic_pg_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U cbtic -d cbtic_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  cbtic_pg_data:
