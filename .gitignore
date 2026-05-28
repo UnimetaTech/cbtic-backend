@@ -4,6 +4,7 @@
 # Binaries for programs and plugins
 .env
 .env.*
+!.env.example
 *.exe
 *.exe~
 *.dll

@@ -21,6 +21,12 @@ type Config struct {
 	OllamaEnabled           bool
 	OllamaBaseURL           string
 	OllamaModel             string
+	SMTPHost                string
+	SMTPPort                string
+	SMTPUser                string
+	SMTPPass                string
+	SMTPFrom                string
+	ExamTeacherEmail        string
 }
 
 func Load() Config {
@@ -55,6 +61,12 @@ func Load() Config {
 		OllamaEnabled:           getEnv("OLLAMA_ENABLED", "false") == "true",
 		OllamaBaseURL:           getEnv("OLLAMA_BASE_URL", ""),
 		OllamaModel:             getEnv("OLLAMA_MODEL", "qwen2.5:7b-instruct-q4_K_M"),
+		SMTPHost:                getEnv("SMTP_HOST", "smtp.gmail.com"),
+		SMTPPort:                getEnv("SMTP_PORT", "587"),
+		SMTPUser:                getEnv("SMTP_USER", ""),
+		SMTPPass:                getEnv("SMTP_PASS", ""),
+		SMTPFrom:                getEnv("SMTP_FROM", getEnv("SMTP_USER", "")),
+		ExamTeacherEmail:        getEnv("EXAM_TEACHER_EMAIL", ""),
 	}
 }
 

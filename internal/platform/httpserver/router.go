@@ -4,13 +4,14 @@ import (
 	"net/http"
 
 	"github.com/cbtic/cbtic-backend/internal/config"
+	"github.com/cbtic/cbtic-backend/internal/modules/exam"
 	"github.com/cbtic/cbtic-backend/internal/modules/news"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/go-chi/cors"
 )
 
-func NewRouter(cfg config.Config, newsHandler *news.Handler) http.Handler {
+func NewRouter(cfg config.Config, newsHandler *news.Handler, examHandler *exam.Handler) http.Handler {
 	r := chi.NewRouter()
 
 	r.Use(middleware.RequestID)
@@ -35,12 +36,12 @@ func NewRouter(cfg config.Config, newsHandler *news.Handler) http.Handler {
 
 	r.Route("/api", func(r chi.Router) {
 		newsHandler.Routes(r)
+		examHandler.Routes(r)
 
 		// Futuro:
 		// projectsHandler.Routes(r)
 		// usersHandler.Routes(r)
 		// chatbotHandler.Routes(r)
-		// evaluationsHandler.Routes(r)
 	})
 
 	return r

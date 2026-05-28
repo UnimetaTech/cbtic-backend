@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/cbtic/cbtic-backend/internal/config"
+	"github.com/cbtic/cbtic-backend/internal/modules/exam"
 	"github.com/cbtic/cbtic-backend/internal/modules/news"
 	"github.com/cbtic/cbtic-backend/internal/platform/database"
 	"github.com/cbtic/cbtic-backend/internal/platform/httpserver"
@@ -49,7 +50,18 @@ func main() {
 
 	newsHandler := news.NewHandler(newsService, newsSyncer, cfg.NewsSyncSecret)
 
-	router := httpserver.NewRouter(cfg, newsHandler)
+	examRepo := exam.NewRepository(db)
+	examMailer := exam.NewMailer(exam.SMTPConfig{
+		Host: cfg.SMTPHost,
+		Port: cfg.SMTPPort,
+		User: cfg.SMTPUser,
+		Pass: cfg.SMTPPass,
+		From: cfg.SMTPFrom,
+	})
+	examService := exam.NewService(examRepo, examMailer, cfg.ExamTeacherEmail)
+	examHandler := exam.NewHandler(examService)
+
+	router := httpserver.NewRouter(cfg, newsHandler, examHandler)
 
 	server := &http.Server{
 		Addr:         ":" + cfg.Port,
